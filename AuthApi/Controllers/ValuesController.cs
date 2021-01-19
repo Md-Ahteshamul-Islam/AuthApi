@@ -8,23 +8,27 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Data.Entity;
 using System.Data.SqlClient;
+using System.Threading.Tasks;
+using AuthApi.Services;
 
 namespace AuthApi.Controllers
 {
     public class ValuesController : ApiController
     {
         protected TestDbEntities Context { get; set; }
+        private UserService UserService { get; set; }
         public ValuesController()
         {
             Context = new TestDbEntities();
+            UserService = new UserService();
         }
         // GET api/values
 
 
         [BasicAuthentication]
-        public List<User> Get()
+        public async Task<List<User>> Get()
         {
-            List<User> UserList = Context.Users.ToList();
+            List<User> UserList = await UserService.GetAllUsersAsync();
             return UserList;
         }
 

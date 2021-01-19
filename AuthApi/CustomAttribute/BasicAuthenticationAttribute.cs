@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AuthApi.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -13,6 +14,11 @@ namespace AuthApi.CustomAttribute
 {
     public class BasicAuthenticationAttribute : AuthorizationFilterAttribute
     {
+        private AuthService AuthService { get; set; }
+        public BasicAuthenticationAttribute()
+        {
+            AuthService = new AuthService();
+        }
         //public override void OnAuthorization(HttpActionContext actionContext)
         //{
         //    base.OnAuthorization(actionContext);
@@ -32,7 +38,7 @@ namespace AuthApi.CustomAttribute
                 var arrUserNameandPassword = decodeauthToken.Split(':');
 
                 // at 0th postion of array we get username and at 1st we get password  
-                if (IsAuthorizedUser(arrUserNameandPassword[0], arrUserNameandPassword[1]))
+                if (AuthService.IsAuthorizedUser(arrUserNameandPassword[0], arrUserNameandPassword[1]))
                 {
                     // setting current principle  
                     Thread.CurrentPrincipal = new GenericPrincipal(
@@ -50,12 +56,12 @@ namespace AuthApi.CustomAttribute
                     .CreateResponse(HttpStatusCode.Unauthorized);
             }
         }
-        public static bool IsAuthorizedUser(string Username, string Password)
-        {
-            // In this method we can handle our database logic here...
-            //Base64Value: Um9ja3k6UGFzczE=
-            return Username == "Rocky" && Password == "Pass1";
-        }
+        //public static bool IsAuthorizedUser(string Username, string Password)
+        //{
+        //    // In this method we can handle our database logic here...
+        //    //Base64Value: Um9ja3k6UGFzczE=
+        //    return Username == "Rocky" && Password == "Pass1";
+        //}
     }
 
     //****************jquery code to consume the api************************
