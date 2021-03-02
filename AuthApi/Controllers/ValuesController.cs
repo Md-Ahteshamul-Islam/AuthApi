@@ -10,9 +10,15 @@ using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using AuthApi.Services;
+using System.Web.Http.Cors;
 
 namespace AuthApi.Controllers
 {
+    //CORS-ORIGIN Help: https://www.c-sharpcorner.com/article/enable-cors-in-asp-net-webapi-2/
+
+    //work on : https://stackoverflow.com/questions/56950277/enable-cors-in-angular-6-and-asp-net
+
+    [EnableCors(origins: "*", headers: "*", methods: "GET, POST, PUT, DELETE, OPTION")]
     public class ValuesController : ApiController
     {
         protected TestDbEntities Context { get; set; }
@@ -33,24 +39,28 @@ namespace AuthApi.Controllers
         }
 
         // GET api/values/5
-        public string Get(int id)
+        public async Task<User> Get(int id)
         {
-            return "value";
+            return await UserService.GetAllUsersByIdAsync(id);
         }
 
         // POST api/values
-        public void Post([FromBody] string value)
+        public async Task<List<User>> Post(User user)
         {
+            List<User> UserList = await UserService.SaveUserAsync(user);
+            return UserList;
         }
 
         // PUT api/values/5
-        public void Put(int id, [FromBody] string value)
+        public async Task<bool> Put(User user)
         {
+            return await UserService.UpdateUserAsync(user);
         }
 
         // DELETE api/values/5
-        public void Delete(int id)
+        public async Task<bool> Delete(int id)
         {
+            return await UserService.DeleteUserAsync(id);
         }
     }
 }
